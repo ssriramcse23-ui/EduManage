@@ -1,0 +1,149 @@
+.fees-container {
+  padding: 30px;
+  background: #f3f6f9;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Navbar */
+.fees-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.back-btn:hover {
+  background: #1d4ed8;
+}
+
+.profile-section {
+  position: relative;
+}
+
+.profile-btn {
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+}
+
+.profile-btn i {
+  font-size: 24px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: white;
+  width: 150px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  border-radius: 12px;
+  z-index: 100;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: #1f2937;
+  transition: 0.2s;
+}
+
+.dropdown-menu a:hover {
+  background: #2563eb;
+  color: white;
+}
+
+/* Fee Summary Cards */
+.fees-cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 25px;
+}
+
+.fees-cards .card {
+  flex: 1;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.fees-cards .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.fees-cards .card h3 {
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.fees-cards .card p {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+/* Fee Table */
+.fees-table {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.fees-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fees-table th {
+  background: #2563eb;
+  color: white;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.fees-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.fees-table tr:hover td {
+  background: #eef2ff;
+}
+
+.paid {
+  color: green;
+  font-weight: bold;
+}
+
+.pending {
+  color: red;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fees-cards {
+    flex-direction: column;
+  }
+}

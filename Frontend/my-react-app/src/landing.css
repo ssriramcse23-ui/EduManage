@@ -1,0 +1,36 @@
+/* Hero */
+.hero-img {
+  width: 330px;
+}
+
+.hero-section {
+  min-height: 70vh;
+}
+
+/* Feature Cards */
+.feature-card {
+  border-radius: 15px;
+  background: #f3f6ff;
+  transition: 0.3s;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  background: #e4ebff;
+}
+
+.feature-img {
+  width: 70px;
+  margin: auto;
+}
+
+/* About Section */
+.about-section {
+  background: #ffffff;
+}
+
+/* Footer */
+.footer {
+  background: #3a57e8;
+}

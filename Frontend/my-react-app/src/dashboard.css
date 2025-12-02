@@ -1,0 +1,157 @@
+/* Global */
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f3f6f9;
+  margin: 0;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #2563eb;
+  color: #fff;
+  height: 100vh;
+  padding: 25px;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.sidebar h3 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.sidebar .nav-link {
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.sidebar .nav-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(5px);
+}
+
+.sidebar .nav-link i {
+  margin-right: 10px;
+}
+
+/* Main layout */
+.main-content {
+  margin-left: 250px;
+  padding: 25px;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topbar h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111;
+}
+
+/* Profile dropdown */
+.profile-btn {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.profile-btn:hover {
+  background: #f0f0f0;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  width: 160px;
+  z-index: 100;
+}
+
+.profile-dropdown a {
+  padding: 10px 15px;
+  display: block;
+  color: #111;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-dropdown a:hover {
+  background: #f7f7f7;
+}
+
+.profile-dropdown a:last-child {
+  border-bottom: none;
+}
+
+/* Dashboard Cards */
+.card {
+  border-radius: 16px !important;
+  border: none !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+.card i {
+  font-size: 45px;
+  margin-bottom: 10px;
+  color: #2563eb;
+}
+
+.card h4 {
+  font-weight: 700;
+}
+
+/* Recent Activities */
+.activities-card {
+  border-radius: 16px !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
+  border: none !important;
+}
+
+.activities-card h5 {
+  font-weight: 700;
+}
+
+.list-group-item {
+  font-size: 15px;
+  padding: 14px 10px;
+}
+
+/* Mobile View */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    text-align: center;
+  }
+
+  .main-content {
+    margin-left: 0;
+    margin-top: 20px;
+  }
+}
