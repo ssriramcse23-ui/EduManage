@@ -10,14 +10,32 @@ const Marks = require("./models/Marks");
 
 // ---------------- APP SETUP ----------------
 const app = express();
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+
+app.use(
+  cors({
+    origin: "*", // 🔧 change to frontend URL later
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
-// ---------------- MONGODB CONNECTION ----------------
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log("MongoDB Connection Error:", err));
+// ---------------- MONGODB CONNECTION (FIXED) ----------------
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected) return;
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    isConnected = true;
+    console.log("MongoDB Connected");
+  } catch (err) {
+    console.error("MongoDB Connection Error:", err);
+  }
+}
+
+connectDB();
 
 // ---------------- USER MODEL ----------------
 const UserSchema = new mongoose.Schema({
@@ -29,10 +47,10 @@ const UserSchema = new mongoose.Schema({
   registerNo: String,
 });
 
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
 
 // ---------------- EMAIL TRANSPORTER ----------------
-let transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
@@ -42,34 +60,52 @@ let transporter = nodemailer.createTransport({
 
 // ---------------- ROUTES ----------------
 
+// ✅ TEST ROUTE (VERY IMPORTANT)
+app.get("/", (req, res) => {
+  res.json({ message: "Backend API working on Vercel 🚀" });
+});
+
 // --- REGISTER ---
 app.post("/register", async (req, res) => {
   try {
-    const { firstName, lastName, email, password, rePassword, gender, registerNo } = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      rePassword,
+      gender,
+      registerNo,
+    } = req.body;
 
     if (password !== rePassword)
-      return res.json({ success: false, message: "Password & Re-Password do not match!" });
+      return res.json({
+        success: false,
+        message: "Password & Re-Password do not match!",
+      });
 
     const existingUser = await User.findOne({ email });
     if (existingUser)
-      return res.json({ success: false, message: "Email already exists!" });
+      return res.json({
+        success: false,
+        message: "Email already exists!",
+      });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
+    await new User({
       firstName,
       lastName,
       email,
       password: hashedPassword,
       gender,
       registerNo,
-    });
+    }).save();
 
-    await newUser.save();
     res.json({ success: true, message: "User Registered Successfully!" });
   } catch (err) {
     console.log("Register Error:", err);
-    res.json({ success: false, message: "Registration Failed!" });
+    res.status(500).json({ success: false, message: "Registration Failed!" });
   }
 });
 
@@ -79,24 +115,32 @@ app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ success: false, message: "Email not found" });
+    if (!user)
+      return res
+        .status(400)
+        .json({ success: false, message: "Email not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ success: false, message: "Incorrect password" });
+    if (!isMatch)
+      return res
+        .status(400)
+        .json({ success: false, message: "Incorrect password" });
 
-    const safeUser = {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      gender: user.gender,
-      registerNo: user.registerNo,
-    };
-
-    res.json({ success: true, message: "Login Successful", user: safeUser });
+    res.json({
+      success: true,
+      message: "Login Successful",
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        gender: user.gender,
+        registerNo: user.registerNo,
+      },
+    });
   } catch (err) {
     console.log("Login Error:", err);
-    res.status(500).json({ success: false, message: "Server Error. Try again later." });
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 });
 
@@ -107,25 +151,28 @@ app.post("/forgot-password", async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user)
-      return res.json({ success: false, message: "Email not registered!" });
+      return res.json({
+        success: false,
+        message: "Email not registered!",
+      });
 
-    const resetLink = `http://localhost:5173/reset-password/${user._id}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${user._id}`;
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Password Reset Link",
       html: `
-        <h2>Hello ${user.firstName},</h2>
-        <p>Click the link below to reset your password:</p>
-        <a href="${resetLink}" target="_blank">Reset Password</a>
+        <h3>Hello ${user.firstName}</h3>
+        <p>Click below to reset your password:</p>
+        <a href="${resetLink}">Reset Password</a>
       `,
     });
 
-    res.json({ success: true, message: "Reset link sent to email!" });
+    res.json({ success: true, message: "Reset link sent!" });
   } catch (err) {
     console.log("Forgot Password Error:", err);
-    res.json({ success: false, message: "Error sending reset email!" });
+    res.status(500).json({ success: false, message: "Email failed" });
   }
 });
 
@@ -140,7 +187,7 @@ app.get("/marks/:userId", async (req, res) => {
     const marks = await Marks.find({ userId });
     res.json({ success: true, marks });
   } catch (err) {
-    console.log("Error fetching marks:", err);
+    console.log("Marks Fetch Error:", err);
     res.status(500).json({ success: false, message: "Error fetching marks" });
   }
 });
@@ -151,16 +198,18 @@ app.post("/marks", async (req, res) => {
     const { userId, subject } = req.body;
 
     if (!userId || !subject)
-      return res.json({ success: false, message: "userId & subject required!" });
+      return res.json({
+        success: false,
+        message: "userId & subject required!",
+      });
 
-    const newMarks = new Marks(req.body);
-
-    await newMarks.save();
+    await new Marks(req.body).save();
     res.json({ success: true, message: "Marks added successfully" });
   } catch (err) {
-    console.log("Error adding marks:", err);
+    console.log("Add Marks Error:", err);
     res.status(500).json({ success: false, message: "Error adding marks" });
   }
 });
 
-
+// ✅ REQUIRED FOR VERCEL
+module.exports = app;
